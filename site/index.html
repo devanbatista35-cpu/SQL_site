@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Entenda a normalização de banco de dados: 1FN, 2FN e 3FN com exemplos práticos de tabelas antes e depois.">
+<meta name="theme-color" content="#0d1818">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLá,bora!">
+<meta property="og:description" content="1FN, 2FN e 3FN explicadas com exemplos práticos.">
+<meta property="og:locale" content="pt_BR">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🗄️%3C/text%3E%3C/svg%3E">
+<title>SQLá,bora!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="wrap"><a href="#topo"><strong>Blog de Banco de Dados</strong></a>
+<nav><a href="#formas">Formas normais</a><a href="#equipe">Equipe</a></nav></div></header>
+
+<main class="wrap" id="topo">
+<section class="hero"><div class="blob"><span class="blob-img"><img src="imagens/banco-de-dados.svg" alt="Ilustração de um banco de dados"></span></div><div><h1>Normalização de banco de dados</h1><p class="lead">Como organizar tabelas para evitar repetição, reduzir erros e facilitar a manutenção dos dados.</p><a class="ulink" href="#formas">Ler o artigo</a><div class="meta">Leitura de 6 minutos</div></div></section>
+
+<article>
+<p>Você já parou para pensar em como os dados são organizados em um sistema? Manter as informações bem estruturadas é essencial para que tudo funcione corretamente. É aí que entra a normalização, um processo que ajuda a reduzir a repetição, evitar inconsistências e melhorar a organização dos dados.</p>
+
+<h2>O que é normalização?</h2>
+<p>Normalizar é organizar as informações em tabelas com o objetivo de reduzir dados repetidos e facilitar a manutenção. Durante a modelagem, ela define onde cada informação deve ser guardada e como as tabelas se relacionam.</p>
+<p>Imagine uma loja com uma tabela de pedidos que guarda o código, o nome e o preço de cada produto. Se o mesmo produto aparece em vários pedidos, nome e preço se repetem. Quando o preço muda, é preciso atualizar todas as ocorrências, e a chance de erro cresce.</p>
+<p>Com a normalização, essas informações passam para tabelas diferentes, como <em>Pedidos</em> e <em>Produtos</em>, ligadas por chaves. Os dados ficam organizados e as alterações são feitas em um único lugar.</p>
+
+<h2 id="formas">As formas normais</h2>
+<p>As formas normais são regras aplicadas em sequência. Cada uma só vale depois que a anterior foi cumprida. Estas são as três principais:</p>
+<ul class="pts">
+<li><span class="pill">1FN</span>cada campo guarda um único valor (atômico).</li>
+<li><span class="pill">2FN</span>todo atributo não chave depende da chave primária inteira.</li>
+<li><span class="pill">3FN</span>atributos não chave não dependem de outros atributos não chave.</li>
+</ul>
+
+<h2>Primeira Forma Normal (1FN)</h2>
+<p class="rule">Uma tabela deve ter campos atômicos: cada campo guarda apenas um valor, sem juntar informações independentes na mesma coluna.</p>
+<p>Numa tabela de clientes, um endereço que reúne rua, bairro e cidade pode ser dividido em colunas próprias. Quando um cliente tem mais de um telefone, cada número ocupa seu próprio registro.</p>
+
+<p class="cap bad">Antes: fora da 1FN</p>
+<div class="scroll"><table>
+<tr><th>ID</th><th>Nome</th><th class="bad">Telefones</th><th class="bad">Endereço completo</th></tr>
+<tr><td>1</td><td>Ana Silva</td><td class="bad">(11) 98888-1111 / (11) 3333-2222</td><td class="bad">Rua A, 100 - Centro - São Paulo</td></tr>
+<tr><td>2</td><td>Bruno Souza</td><td class="bad">(21) 97777-3333</td><td class="bad">Av. Brasil, 500 - Copacabana - Rio de Janeiro</td></tr>
+</table></div>
+<p>A coluna de telefones guarda vários valores na mesma célula e o endereço mistura várias informações.</p>
+
+<p class="cap good">Depois: na 1FN</p>
+<div class="scroll"><table>
+<tr><th>ID_Cliente</th><th>Nome</th><th class="good">Telefone</th><th class="good">Rua</th><th class="good">Bairro</th><th class="good">Cidade</th></tr>
+<tr><td>1</td><td>Ana Silva</td><td class="good">(11) 98888-1111</td><td class="good">Rua A, 100</td><td class="good">Centro</td><td class="good">São Paulo</td></tr>
+<tr><td>1</td><td>Ana Silva</td><td class="good">(11) 3333-2222</td><td class="good">Rua A, 100</td><td class="good">Centro</td><td class="good">São Paulo</td></tr>
+<tr><td>2</td><td>Bruno Souza</td><td class="good">(21) 97777-3333</td><td class="good">Av. Brasil, 500</td><td class="good">Copacabana</td><td class="good">Rio de Janeiro</td></tr>
+</table></div>
+
+<h2>Segunda Forma Normal (2FN)</h2>
+<p class="rule">A tabela já está na 1FN e todo atributo não chave depende da chave primária completa, sem dependências parciais.</p>
+<p>Isso importa quando a chave primária tem mais de um atributo. Numa tabela de itens de pedido, a chave é <strong>ID_Pedido + ID_Produto</strong>. A quantidade depende dos dois, pois diz quantas unidades daquele produto foram compradas naquele pedido. Já o nome e o valor unitário dependem só do <strong>ID_Produto</strong>, o que gera redundância.</p>
+
+<p class="cap bad">Antes: fora da 2FN</p>
+<div class="scroll"><table>
+<tr><th>ID_Pedido (PK)</th><th>ID_Produto (PK)</th><th class="bad">Nome_Produto</th><th class="bad">Valor_Unitario</th><th>Quantidade</th></tr>
+<tr><td>101</td><td>1</td><td class="bad">Camiseta Polo</td><td class="bad">R$ 50,00</td><td>2</td></tr>
+<tr><td>101</td><td>2</td><td class="bad">Calça Jeans</td><td class="bad">R$ 120,00</td><td>1</td></tr>
+<tr><td>102</td><td>1</td><td class="bad">Camiseta Polo</td><td class="bad">R$ 50,00</td><td>3</td></tr>
+</table></div>
+
+<p class="cap good">Depois: duas tabelas na 2FN</p>
+<h3>Produtos</h3>
+<div class="scroll"><table style="min-width:360px">
+<tr><th>ID_Produto (PK)</th><th>Nome_Produto</th><th>Valor_Unitario</th></tr>
+<tr><td class="good">1</td><td>Camiseta Polo</td><td>R$ 50,00</td></tr>
+<tr><td class="good">2</td><td>Calça Jeans</td><td>R$ 120,00</td></tr>
+</table></div>
+<h3>Itens_Pedido</h3>
+<div class="scroll"><table style="min-width:360px">
+<tr><th>ID_Pedido (PK)</th><th>ID_Produto (PK)</th><th>Quantidade</th></tr>
+<tr><td>101</td><td>1</td><td>2</td></tr>
+<tr><td>101</td><td>2</td><td>1</td></tr>
+<tr><td>102</td><td>1</td><td>3</td></tr>
+</table></div>
+
+<h2>Terceira Forma Normal (3FN)</h2>
+<p class="rule">A tabela está na 1FN e na 2FN, e nenhum atributo não chave depende de outro atributo não chave.</p>
+<p>Cada informação deve depender diretamente da chave primária. Se o total da compra pode ser calculado a partir da quantidade e do valor unitário, ele não precisa ser guardado. Basta calculá-lo quando for necessário. O valor unitário fica na tabela de produtos.</p>
+
+<h3>Produtos</h3>
+<div class="scroll"><table style="min-width:420px">
+<tr><th>Código do Produto (PK)</th><th>Nome do Produto</th><th>Valor Unitário</th></tr>
+<tr><td>101</td><td>Camiseta Básica</td><td>R$ 50,00</td></tr>
+<tr><td>102</td><td>Calça Jeans</td><td>R$ 120,00</td></tr>
+<tr><td>103</td><td>Tênis Esportivo</td><td>R$ 250,00</td></tr>
+</table></div>
+<h3>Itens do pedido</h3>
+<div class="scroll"><table style="min-width:420px">
+<tr><th>Código do Pedido (PK)</th><th>Código do Produto (PK / FK)</th><th>Quantidade</th></tr>
+<tr><td>1</td><td>101</td><td>2</td></tr>
+<tr><td>1</td><td>102</td><td>1</td></tr>
+<tr><td>2</td><td>103</td><td>1</td></tr>
+<tr><td>2</td><td>101</td><td>4</td></tr>
+</table></div>
+<p>O valor unitário não se repete aqui, pois é buscado na tabela de produtos. O total da compra (<em>quantidade × valor unitário</em>) também não é guardado: é calculado na hora.</p>
+
+<h2>Conclusão</h2>
+<p>A 1FN organiza os campos em valores atômicos, a 2FN elimina dependências parciais e a 3FN elimina dependências entre atributos não chave. Aplicadas em sequência, elas reduzem a repetição, facilitam a manutenção e deixam os dados mais consistentes. Entender as formas normais é um passo essencial para criar sistemas de banco de dados confiáveis e eficientes.</p>
+</article>
+
+<section class="team" id="equipe">
+<h2>Quem fez este blog</h2>
+<p>Os cinco membros do grupo.</p>
+
+<div class="member"><div class="foto"><span><img src="fotos/vanessa.jpeg" alt="Vanessa_Viera" width="72" height="72" loading="lazy" onerror="this.remove()"></span></div><div class="info"><strong>Vanessa Vieira dos Santos</strong><a href="https://github.com/devanbatista35-cpu" target="_blank" rel="noopener">GitHub: Vanessa Vieira</a><a href="https://www.instagram.com/devanfa35/" target="_blank" rel="noopener">Instagram: @devanfa35</a><a href="https://www.linkedin.com/in/vanessa-batista-de-freitas-59b1b242b/" target="_blank" rel="noopener">LinkedIn: Vanessa Vieira</a><p class="member-details">Curso: Ciência da Computação | Semestre: 2º | Área de interesse: Sistemas Embarcados </p></div></div>
+<div class="member"><div class="foto"><span><img src="fotos/gustavo_sacomani.jpeg" alt="Gustavo_Sacomani" width="72" height="72" loading="lazy" onerror="this.remove()"></span></div><div class="info"><strong>Gustavo Sacomani Rafael</strong><a href="https://github.com/GsacomaniR" target="_blank" rel="noopener">GitHub: Gustavo Sacomani</a><a href="https://www.instagram.com/gustavo_sacomani_rafael/" target="_blank" rel="noopener">Instagram: @gustavo_sacomani_rafael</a><a href="https://www.linkedin.com/in/gustavo-sacomani-rafael-6941823b8/?isSelfProfile=true" target="_blank" rel="noopener">LinkedIn: Gustavo Sacomani</a><p class="member-details">Curso: Ciência da Computação | Semestre: 2º | Área de interesse: Modelagem e Machine Learning </p></div></div>
+<div class="member"><div class="foto"><span><img src="fotos/joao_pedro.jpeg" alt="João_Pedro" width="72" height="72" loading="lazy" onerror="this.remove()"></span></div><div class="info"><strong>João Pedro Camargo Souza</strong><a href="https://github.com/jpcs120308-cpu" target="_blank" rel="noopener">GitHub: João Pedro</a><a href="https://www.instagram.com/fallenchan123?obrf=Zjd5djRiZ3F6cTJl" target="_blank" rel="noopener">Instagram: @fallenchan123</a><a href="https://www.linkedin.com/in/joão-pedro-a331133b9?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">LinkedIn: João Pedro</a><p class="member-details">Curso: Análise e Desenvolvimento de Sistemas | Semestre: 2º | Área de interesse: Analista de dados </p></div></div>
+<div class="member"><div class="foto"><span><img src="fotos/pamela.jpeg" alt="Pamela_Nunes" width="72" height="72" loading="lazy" onerror="this.remove()"></span></div><div class="info"><strong>Pamela Nunes de Campos</strong><a href="https://github.com/pamelanunescampos" target="_blank" rel="noopener">GitHub: Pamela Nunes</a><a href="https://www.instagram.com/pamela.nunescampos?exln=bWZiaXVodG50cWc%3D&utm_source=qr" target="_blank" rel="noopener">Instagram: @pamela.nunescampos</a><a href="https://www.linkedin.com/in/pamela-nunes-de-campos-52141039a?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener">LinkedIn: Pamela Nunes</a><p class="member-details">Curso: Análise e Desenvolvimento de Sistemas | Semestre: 1º | Área de interesse: Desenvolvimento de Software </p></div></div>
+<div class="member"><div class="foto"><span><img src="fotos/henrique.jpeg" alt="Henrique_Granso" width="72" height="72" loading="lazy" onerror="this.remove()"></span></div><div class="info"><strong>Henrique Granso</strong><a href="https://github.com/henriqueogranso" target="_blank" rel="noopener">GitHub: Henrique GRanso</a><a href="https://www.instagram.com/henriqve_?vrfl=ZnJtNzI5ZG0wZzR6" target="_blank" rel="noopener">Instagram: @henriqve_</a><a href="https://www.linkedin.com/in/henrique-de-oliveira-granso-17aa51319?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">LinkedIn: Henrique Granso</a><p class="member-details">Curso: Ciência da Computação | Semestre: 2º | Área de interesse: Desenvolvimento Back-End </p></div></div>
+</section>
+</main>
+<footer><div class="wrap">Blog sobre normalização de banco de dados</div></footer>
+</body>
+</html>

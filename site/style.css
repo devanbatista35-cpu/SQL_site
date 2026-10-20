@@ -1,0 +1,166 @@
+/* =====================================================================
+   ESTILO DO BLOG  -  tudo que você pode querer mudar fica aqui no topo
+   ===================================================================== */
+:root{
+  /* ---- CORES ---- */
+  --cor-fundo: #0d1818;                 /* fundo da página */
+  --cor-texto: #ffffff;                 /* títulos e links */
+  --cor-texto-corpo: #e4ecec;           /* parágrafos */
+  --cor-texto-suave: #b4c2c2;           /* textos secundários */
+  --cor-borda: rgba(255,255,255,.16);   /* linhas e bordas */
+  --cor-painel: rgba(255,255,255,.04);  /* fundo das tabelas */
+  --cor-foco: #ffb066;                  /* contorno ao navegar com o teclado */
+
+  /* Tabelas: "antes" (problema) e "depois" (corrigido) */
+  --cor-problema-fundo: rgba(255,170,70,.16);
+  --cor-problema-texto: #ffc984;
+  --cor-ok-fundo: rgba(110,230,170,.14);
+  --cor-ok-texto: #8fe8bd;
+
+  /* Cores do brilho colorido (manchas atrás da imagem e das fotos) */
+  --brilho-1: #ff3d4a;  /* vermelho */
+  --brilho-2: #ff9b3d;  /* laranja */
+  --brilho-3: #a64bff;  /* roxo */
+
+  /* ---- FONTES (carregadas no <head> do index.html) ---- */
+  --fonte-titulo: "Syne", system-ui, sans-serif;
+  --fonte-texto: "DM Sans", system-ui, sans-serif;
+  --tamanho-texto: 17px;
+
+  /* ---- TAMANHOS ---- */
+  --largura-site: 1000px;     /* largura máxima da página */
+  --largura-artigo: 660px;    /* largura máxima do texto do artigo */
+  --tamanho-imagem-topo: 360px;  /* círculo com o banco de dados */
+  --tamanho-foto: 120px;         /* fotos dos integrantes */
+  --raio-tabela: 14px;
+
+  /* ---- FORMATOS ORGÂNICOS (cantos arredondados irregulares) ---- */
+  --formato-imagem: 58% 42% 52% 48% / 48% 56% 44% 52%;
+  --formato-brilho: 58% 42% 48% 52% / 46% 56% 44% 54%;
+}
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+:root{
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);      /* respeita o notch do celular */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: dark;
+}
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--cor-fundo); }
+body{
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font: 400 var(--tamanho-texto)/1.75 var(--fonte-texto);
+  overflow-x: hidden;
+}
+a{ color: var(--cor-texto); text-underline-offset: 4px; }
+:focus-visible{ outline: 3px solid var(--cor-foco); outline-offset: 4px; }
+.wrap{ max-width: var(--largura-site); margin: 0 auto; padding: 0 24px; }
+
+/* =====================================================================
+   TEXTOS
+   ===================================================================== */
+h2{ font: 800 clamp(1.8rem,4.5vw,2.5rem)/1.1 var(--fonte-titulo); letter-spacing: -.02em; margin: 76px 0 16px; }
+h3{ font: 700 1.05rem var(--fonte-titulo); margin: 30px 0 8px; }
+p{ margin: 0 0 18px; color: var(--cor-texto-corpo); }
+article{ max-width: var(--largura-artigo); margin: 0 auto; }
+.rule{ font: 600 1.2rem/1.45 var(--fonte-titulo); color: var(--cor-texto); margin: 26px 0; }  /* frase de definição */
+.ulink{ font: 600 15px var(--fonte-titulo); }                                                  /* link sublinhado */
+.meta{ font-size: 14px; color: var(--cor-texto-suave); margin-top: 26px; }
+
+/* Lista das formas normais (1FN, 2FN, 3FN) */
+ul.pts{ list-style: none; padding: 0; margin: 0 0 18px; }
+ul.pts li{ margin-bottom: 8px; color: var(--cor-texto-corpo); }
+.pill{
+  display: inline-block; margin-right: 10px; padding: 2px 12px; border-radius: 99px;
+  font: 700 13px var(--fonte-titulo); color: #fff;
+  background: linear-gradient(90deg, var(--brilho-1), var(--brilho-3));
+}
+
+/* =====================================================================
+   TOPO (menu)
+   ===================================================================== */
+header.top{ font: 600 14px var(--fonte-titulo); }
+header.top .wrap{ display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
+header.top nav{ display: flex; gap: 22px; }
+
+/* =====================================================================
+   IMAGEM COM BRILHO  (círculo do banco de dados e fotos da equipe)
+   Estrutura:  .blob > .blob-img > img      e      .foto > span > img
+   ===================================================================== */
+.blob, .foto{ position: relative; flex: none; }
+.blob{ width: min(100%, var(--tamanho-imagem-topo)); aspect-ratio: 1; }
+.foto{ width: var(--tamanho-foto); height: var(--tamanho-foto); }
+
+/* brilho colorido desfocado atrás da imagem */
+.blob::before, .foto::before{
+  content: ""; position: absolute; inset: -8%;
+  border-radius: var(--formato-brilho);
+  filter: blur(16px) saturate(1.2);
+  background:
+    radial-gradient(circle at 38% 22%, var(--brilho-1) 0, transparent 55%),
+    radial-gradient(circle at 78% 42%, var(--brilho-2) 0, transparent 50%),
+    radial-gradient(circle at 28% 82%, var(--brilho-3) 0, transparent 65%);
+}
+/* a imagem em si, recortada no formato orgânico */
+.blob-img, .foto span{
+  position: absolute; inset: 0; overflow: hidden;
+  border-radius: var(--formato-imagem);
+  background: #1d2b2b;
+}
+.blob-img{ inset: 10%; }
+.blob-img img, .foto img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+/* avatar cinza que aparece enquanto a foto não existir */
+.foto span{
+  background: #1d2b2b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Ccircle cx='36' cy='28' r='12' fill='%23fff' fill-opacity='.3'/%3E%3Cpath d='M12 72c0-16 11-26 24-26s24 10 24 26z' fill='%23fff' fill-opacity='.3'/%3E%3C/svg%3E") center/cover;
+}
+
+/* =====================================================================
+   SEÇÃO INICIAL (hero)
+   ===================================================================== */
+.hero{ display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 56px 0 80px; }
+.hero h1{ font: 800 clamp(2.1rem,5.4vw,3.4rem)/1.06 var(--fonte-titulo); letter-spacing: -.02em; margin: 0 0 20px; }
+.hero .lead{ font-size: 1.05rem; color: var(--cor-texto-suave); max-width: 30ch; margin: 0 0 30px; }
+
+/* =====================================================================
+   TABELAS (antes = amarelo, depois = verde)
+   ===================================================================== */
+.scroll{ overflow-x: auto; margin: 10px 0 22px; border: 1px solid var(--cor-borda); border-radius: var(--raio-tabela); background: var(--cor-painel); }
+table{ border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14.5px; line-height: 1.4; }
+th, td{ padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--cor-borda); }
+tr:last-child td{ border-bottom: 0; }
+th{ font: 700 13.5px var(--fonte-titulo); border-bottom: 1px solid rgba(255,255,255,.4); }
+td.bad,  th.bad { background: var(--cor-problema-fundo); color: var(--cor-problema-texto); }
+td.good, th.good{ background: var(--cor-ok-fundo);        color: var(--cor-ok-texto); }
+.cap{ font: 700 14px var(--fonte-titulo); margin: 24px 0 0; }   /* legenda "Antes" / "Depois" */
+.cap.bad{ color: var(--cor-problema-texto); }
+.cap.good{ color: var(--cor-ok-texto); }
+
+/* =====================================================================
+   EQUIPE
+   ===================================================================== */
+.team{ margin-top: 96px; padding-bottom: 72px; }
+.team h2{ margin-top: 0; }
+.team > p{ color: var(--cor-texto-suave); }
+.member{ display: grid; grid-template-columns: var(--tamanho-foto) 1fr; gap: 26px; align-items: center; padding: 20px 0; border-top: 1px solid var(--cor-borda); }
+.info{ display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: baseline; font-size: 15px; }
+.info strong{ flex-basis: 100%; margin-bottom: 4px; font: 700 1.3rem var(--fonte-titulo); }   /* nome do integrante */
+.member-details{ flex-basis: 100%; margin: 4px 0 0; color: var(--cor-texto-suave); }
+
+footer{ border-top: 1px solid var(--cor-borda); padding: 24px 0; font-size: 14px; color: var(--cor-texto-suave); }
+
+/* =====================================================================
+   CELULAR
+   ===================================================================== */
+@media (max-width: 760px){
+  .hero{ grid-template-columns: 1fr; gap: 10px; padding-top: 24px; }
+  .blob{ width: min(80%, 300px); }
+}
+@media (max-width: 480px){
+  :root{ --tamanho-foto: 88px; }
+  .member{ gap: 18px; }
+}
