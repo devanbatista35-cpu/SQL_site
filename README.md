@@ -1,5 +1,7 @@
 # 🗄️ SQLá,bora!
 
+🔗 **Acesse o blog:** [devanbatista35-cpu.github.io/SQL_site](https://devanbatista35-cpu.github.io/SQL_site/)
+
 > Blog educativo sobre **normalização de banco de dados**: 1FN, 2FN e 3FN explicadas com exemplos práticos de tabelas *antes* e *depois*.
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
